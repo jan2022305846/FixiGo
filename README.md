@@ -1,3 +1,3 @@
 # FixiGo
 Mechanic Locator Mobile App
-React Native (Expo), FireAuth, AsyncStorage
+React Native (Expo), Firebase (Auth,Storage), AsyncStorage
