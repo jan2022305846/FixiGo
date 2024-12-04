@@ -49,7 +49,7 @@ const OnBoard = () => {
           {/* Button at the bottom of the second screen */}
           <CustomButton 
             title="Get Started"
-            handlePress={() => router.push('/home')}
+            handlePress={() => router.push('/sign-in')}
             containerStyles="w-11/12 mb-8" //  Adjust width and bottom margin for spacing
           />
         </View>

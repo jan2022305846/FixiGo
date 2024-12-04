@@ -13,6 +13,9 @@ module.exports = {
         secondary: {
           DEFAULT: "#2CC2C2",
         },
+        tertiary: {
+          DEFAULT: "#004ADD",
+        },
         white: {
           DEFAULT: "#FFFFFF",
         },

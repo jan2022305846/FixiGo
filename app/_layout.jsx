@@ -3,7 +3,9 @@ import { Image,View, Text } from 'react-native';
 import { Stack, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
+import MechanicProvider from './(context)/MechanicContext';
 import "../styles.css";
+
 SplashScreen.preventAutoHideAsync();
 
 const _layout = () => {
@@ -27,15 +29,14 @@ const _layout = () => {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{headerShown : false}} />
-      <Stack.Screen name="onboard" options={{headerShown : false}} />
-      <Stack.Screen name="(auth)" options={{headerShown : false}} />
-      <Stack.Screen name="(tabs)" options={{headerShown : false}} />
-      {/*
-      <Stack.Screen name="/search/[query]" options={{headerShown : false}} />
-      */}
-    </Stack>
+    <MechanicProvider>
+      <Stack>
+        <Stack.Screen name="index" options={{headerShown : false}} />
+        <Stack.Screen name="onboard" options={{headerShown : false}} />
+        <Stack.Screen name="(auth)" options={{headerShown : false}} />
+        <Stack.Screen name="(tabs)" options={{headerShown : false}} />
+      </Stack>
+    </MechanicProvider>
   );
 };
 

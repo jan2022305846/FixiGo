@@ -28,7 +28,7 @@ const SignIn = () => {
     setIsSubmitting(true);
 
     try {
-    //  await signInWithEmailAndPassword(auth, email, password); // Firebase Sign In
+      await signInWithEmailAndPassword(auth, email, password); // Firebase Sign In
       router.push('home'); // Redirect to home screen
     } catch (error) {
       Alert.alert('Error', error.message);
