@@ -1,14 +1,17 @@
-import { Image, View, Text, ScrollView, Alert } from 'react-native';
+// app/pages/sign-up.jsx
 import React, { useState } from 'react';
+import { Image, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
-import { Link } from 'expo-router';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { Link, useRouter } from 'expo-router';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';  // Import auth object
 
 const SignUp = () => {
+  const router = useRouter();
+
   const [form, setForm] = useState({
     username: '',
     email: '',
@@ -33,9 +36,26 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password); // Firebase Sign Up
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Update the user's displayName
+      await updateProfile(user, {
+        displayName: username,
+        // photoURL: 'https://example.com/profile.jpg', // Optional: set photoURL if available
+      });
+
+      // Optional: Reload the user to get updated info
+      await user.reload();
+      const updatedUser = auth.currentUser;
+      console.log('User displayName set to:', updatedUser.displayName); // Debugging log
+
       Alert.alert('Success', `Welcome, ${username}! Your account has been created.`);
       setForm({ username: '', email: '', password: '' });  // Reset form
+
+      // Navigate to the Home or Profile screen after successful sign-up
+      router.replace('/home'); // Ensure '/home' correctly includes the Profile tab
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -51,6 +71,7 @@ const SignUp = () => {
           <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">
             Sign Up
           </Text>
+
           <FormField
             title="Username"
             value={form.username}

@@ -1,38 +1,71 @@
 // app/tabs/profile.jsx
-import React from 'react';
-import { Image, View, Text, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../../components/CustomButton';
 import Header from '../../components/Header';
 import { images } from '../../constants';
+import { auth } from '../../firebaseConfig';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'expo-router';
 
 const ProfileScreen = () => {
-  const handleLogout = () => {
-    // Placeholder function for logout
-    console.log('Logout button pressed');
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      if (currentUser) {
+        // Optional: Reload the user to get the latest data
+        await currentUser.reload();
+        const updatedUser = auth.currentUser;
+        setUser({
+          email: updatedUser.email,
+          photoURL: updatedUser.photoURL,
+          displayName: updatedUser.displayName,
+        });
+        console.log('User Data:', {
+          email: updatedUser.email,
+          photoURL: updatedUser.photoURL,
+          displayName: updatedUser.displayName,
+        });
+      } else {
+        setUser(null);
+        router.replace('/sign-in');
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      Alert.alert('Success', 'You have been logged out successfully.');
+      router.replace('/sign-in');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      Alert.alert('Error', 'Failed to log out. Please try again.');
+    }
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <View className="relative h-full">
+    <SafeAreaView className="flex-1 bg-primary">
+      <View className="relative flex-1">
         <Header />
-        <ScrollView className="mt-[20vh]">
-          <View className="max-w-[80vh] justify-center min-h-[15vh] px-4 py-4 flex-row items-center">
-            <Image source={images.profile} className="w-[95px] h-[95px] mr-4" />
-            <View>
-              <Text className="text-lg text-gray-800 font-semibold">John Doe</Text>
-              <Text className="text-md text-gray-600">johndoe@gmail.com</Text>
+        <ScrollView contentContainerStyle={{ paddingTop: 200, paddingHorizontal: 40 }}>
+          <View className="mb-6 flex-row items-center justify-evenly">
+            <Image
+              source={images.profile} // Ensure this path is correct
+              className="w-24 h-24 rounded-full mb-4"
+              resizeMode="cover"
+            />
+            <View className="flex-col">
+              <Text className="text-lg text-white font-pextrabold">{user?.displayName || 'Loading...'}</Text>
+              <Text className="text-md text-white font-psemibold">{user?.email || ' '}</Text>
             </View>
           </View>
-          <View className="max-w-[80vh] justify-center min-h-[15vh] px-4 py-4">
-            <CustomButton
-              title="Edit Profile"
-              handlePress={handleLogout}
-              containerStyles="mx-7"
-              isLoading={false}
-            />
-          </View>
-          <View className="max-w-[80vh] justify-center min-h-[15vh] px-4 py-4">
+          <View className="mb-4 px-4">
             <CustomButton
               title="Logout"
               handlePress={handleLogout}

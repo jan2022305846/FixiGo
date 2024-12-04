@@ -1,12 +1,13 @@
-import { Image, View, Text, ScrollView, Alert } from 'react-native';
+// app/pages/sign-in.jsx
 import React, { useState } from 'react';
+import { Image, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
-import { Link, useRouter } from 'expo-router'; // Import useRouter
+import { Link, useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebaseConfig';  // Import auth object
+import { auth } from '../../firebaseConfig';
 
 const SignIn = () => {
   const [form, setForm] = useState({
@@ -15,7 +16,7 @@ const SignIn = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
 
   const submit = async () => {
     const { email, password } = form;
@@ -28,9 +29,10 @@ const SignIn = () => {
     setIsSubmitting(true);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password); // Firebase Sign In
-      router.push('home'); // Redirect to home screen
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace('/home'); // Redirect to Home screen
     } catch (error) {
+      console.error('Sign-In Error:', error);
       Alert.alert('Error', error.message);
     } finally {
       setIsSubmitting(false);
