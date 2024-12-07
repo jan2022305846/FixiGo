@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "610275641442",
+    "firebase_url": "https://fixigo-2e986-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fixigo-2e986",
+    "storage_bucket": "fixigo-2e986.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610275641442:android:4792170ff567890a2be93b",
+        "android_client_info": {
+          "package_name": "com.anonymous.fixigo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610275641442-fvgk3hh6rnoahd3ggnn7l7hchv9rc1at.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.fixigo",
+            "certificate_hash": "2967f6bba672859bd797bba46b355c0a62b34ad1"
+          }
+        },
+        {
+          "client_id": "610275641442-56e1oiil8oi2o0cl9a5uqbo6t7gduv0b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVRdehkJZKP_KeZCemog_VubdLNCkX-EU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610275641442-56e1oiil8oi2o0cl9a5uqbo6t7gduv0b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

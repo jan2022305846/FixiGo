@@ -93,6 +93,12 @@ const SignUp = () => {
             secureTextEntry={true}
           />
 
+          <View className="flex-row items-center mt-5">
+            <Text className="text-sm text-gray-100 font-pregular mt-2">
+              I agree to the Terms of Service and Privacy Policy
+            </Text>
+          </View>
+
           <CustomButton
             title="Sign Up"
             handlePress={submit}

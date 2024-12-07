@@ -1,38 +1,78 @@
 // app/pages/sign-in.jsx
-import React, { useState } from 'react';
-import { Image, View, Text, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Image, View, Text, ScrollView, Alert, TouchableOpacity} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { images } from '../../constants';
+import { images, icons } from '../../constants';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import { Link, useRouter } from 'expo-router';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  signInWithCredential,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+} from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
+import * as Google from 'expo-auth-session/providers/google';
+import * as Facebook from 'expo-auth-session/providers/facebook';
+import * as WebBrowser from 'expo-web-browser';
+// Allow WebBrowser redirects
+WebBrowser.maybeCompleteAuthSession();
 
 const SignIn = () => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
+  // Google Sign-In
+  const [, response, promptAsync] = Google.useAuthRequest({
+    androidClientId: '610275641442-56e1oiil8oi2o0cl9a5uqbo6t7gduv0b.apps.googleusercontent.com',
+    webClientId: '1:610275641442:web:4c502ae667cfeb6c2be93b',
+    scopes: ['profile', 'email'],
+  });
+
+  // Facebook Sign-In
+  const [, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+    clientId: '1088305459695773',
+    scopes: ['public_profile', 'email'],
+  });
+
+  // Handle Google Sign-In Response
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      const credential = GoogleAuthProvider.credential(authentication.idToken);
+      signInWithCredential(auth, credential)
+        .then(() => router.push('/home'))
+        .catch((error) => Alert.alert('Error', error.message));
+    }
+  }, [response]);
+
+  // Handle Facebook Sign-In Response
+  useEffect(() => {
+    if (fbResponse?.type === 'success') {
+      const { authentication } = fbResponse;
+      const credential = FacebookAuthProvider.credential(authentication.accessToken);
+      signInWithCredential(auth, credential)
+        .then(() => router.push('/home'))
+        .catch((error) => Alert.alert('Error', error.message));
+    }
+  }, [fbResponse]);
+
   const submit = async () => {
     const { email, password } = form;
-
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'Email and password are required.');
       return;
     }
-
     setIsSubmitting(true);
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      router.replace('/home'); // Redirect to Home screen
+      router.push('/home');
     } catch (error) {
-      console.error('Sign-In Error:', error);
       Alert.alert('Error', error.message);
     } finally {
       setIsSubmitting(false);
@@ -62,12 +102,35 @@ const SignIn = () => {
             secureTextEntry={true}
           />
 
+          <View className="justify-center items-center mt-2">
+            <Link href="/reset" className="text-lg font-psemibold text-secondary">
+              Forgot Password?
+            </Link>
+          </View>
+
           <CustomButton
             title="Log In"
             handlePress={submit}
             containerStyles="mt-7"
             isLoading={isSubmitting}
           />
+
+          <View className="justify-center pt-5 flex-row gap-2">
+            <Text className="text-white justify-center font-psemibold">-------OR--------</Text>
+          </View>
+
+          <View className="justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">Continue with</Text>
+          </View>
+
+          <View className="justify-center pt-5 flex-row gap-10">
+            <TouchableOpacity onPress={() => promptAsync()}>
+              <Image source={icons.google} className="w-12 h-12" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => fbPromptAsync()}>
+              <Image source={icons.facebook} className="w-12 h-12" />
+            </TouchableOpacity>
+          </View>
 
           <View className="justify-center pt-5 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">Don't have an Account?</Text>

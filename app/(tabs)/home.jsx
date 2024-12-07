@@ -5,8 +5,8 @@ import * as Location from 'expo-location';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import CustomButton from '../../components/CustomButton';
 import Header from '../../components/Header';
-import SearchSpinner from '../../components/SearchSpinner';
-import { icons, images } from '../../constants';
+import Search from '../../components/Search';
+import { images } from '../../constants';
 import MechPreDetailsScreen from '../(pages)/mechpredetails';
 
 const HomeScreen = () => {
@@ -90,7 +90,7 @@ const HomeScreen = () => {
           <View className="max-w-[80vh] justify-center min-h-[45vh] px-4 py-2">
             {!isMapVisible || !location ? (
               <View className="flex-1 justify-center items-center">
-                {isLoading ? <SearchSpinner /> : <Image source={images.empty} className="w-[95px] h-[95px]" />}
+                {isLoading ? <Search/> : <Image source={images.mechanic} className="w-[400px] h-[400px]" />}
               </View>
             ) : (
               <View style={{ borderRadius: 40, overflow: 'hidden' }}>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native'; // Ensure correct import
-import loader from '../constants/loader'; // Ensure correct import
+import loading from '../constants/loading';
 
 const SearchSpinner = () => {
   return (
     <View style={styles.container}>
       <LottieView
-        source={loader.search}
+        source={loading.loads}
         autoPlay
         loop
         style={styles.lottie}
@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   lottie: {
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
   },
 });
 

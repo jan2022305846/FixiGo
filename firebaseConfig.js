@@ -19,3 +19,6 @@ const auth = initializeAuth(app, {
 });
 
 export { auth };  // Export auth object for use in your app
+
+//android
+//458840409759-f662mtj0vqe2nvn3eirho8hkp15ilf2t.apps.googleusercontent.com

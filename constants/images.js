@@ -7,5 +7,6 @@ import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
 import marker from "../assets/images/marker.png";
+import mechanic from "../assets/images/mechanic.png";
 
-export default { profile, thumbnail, card1, card2, path, logo, logoSmall, empty, marker };
+export default { profile, thumbnail, card1, card2, path, logo, logoSmall, empty, marker, mechanic };
