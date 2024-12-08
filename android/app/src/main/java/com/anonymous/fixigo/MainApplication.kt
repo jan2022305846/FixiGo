@@ -12,9 +12,11 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
-import com.facebook.FacebookSdk;
+
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
+
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 
 class MainApplication : Application(), ReactApplication {
 

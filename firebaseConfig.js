@@ -20,5 +20,6 @@ const auth = initializeAuth(app, {
 
 export { auth };  // Export auth object for use in your app
 
-//android
-//458840409759-f662mtj0vqe2nvn3eirho8hkp15ilf2t.apps.googleusercontent.com
+//android- 610275641442-amehqr96udjv1o7ahjm988h2quu4ej0h.apps.googleusercontent.com
+//IOS- 610275641442-bovutvulcet9dqvam6rcusouqm1ajnir.apps.googleusercontent.com
+//web- 610275641442-56e1oiil8oi2o0cl9a5uqbo6t7gduv0b.apps.googleusercontent.com

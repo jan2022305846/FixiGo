@@ -1,66 +1,47 @@
 // app/pages/sign-in.jsx
 import React, { useState, useEffect } from 'react';
-import { Image, View, Text, ScrollView, Alert, TouchableOpacity} from 'react-native';
+import { Image, View, Text, ScrollView, Alert, Modal, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { images, icons } from '../../constants';
+import { images } from '../../constants';
 import FormField from '../../components/FormField';
 import CustomButton from '../../components/CustomButton';
 import { Link, useRouter } from 'expo-router';
-import {
-  signInWithEmailAndPassword,
-  signInWithCredential,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-} from 'firebase/auth';
-import { auth } from '../../firebaseConfig';
-import * as Google from 'expo-auth-session/providers/google';
-import * as Facebook from 'expo-auth-session/providers/facebook';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { auth as firebaseAuth } from '../../firebaseConfig';
 import * as WebBrowser from 'expo-web-browser';
+
 // Allow WebBrowser redirects
 WebBrowser.maybeCompleteAuthSession();
 
 const SignIn = () => {
+  const router = useRouter();
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = firebaseAuth.onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      router.push('/home');
+    }
+  }, [user]);
+
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
-
-  // Google Sign-In
-  const [, response, promptAsync] = Google.useAuthRequest({
-    androidClientId: '610275641442-56e1oiil8oi2o0cl9a5uqbo6t7gduv0b.apps.googleusercontent.com',
-    webClientId: '1:610275641442:web:4c502ae667cfeb6c2be93b',
-    scopes: ['profile', 'email'],
-  });
-
-  // Facebook Sign-In
-  const [, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
-    clientId: '1088305459695773',
-    scopes: ['public_profile', 'email'],
-  });
-
-  // Handle Google Sign-In Response
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { authentication } = response;
-      const credential = GoogleAuthProvider.credential(authentication.idToken);
-      signInWithCredential(auth, credential)
-        .then(() => router.push('/home'))
-        .catch((error) => Alert.alert('Error', error.message));
-    }
-  }, [response]);
-
-  // Handle Facebook Sign-In Response
-  useEffect(() => {
-    if (fbResponse?.type === 'success') {
-      const { authentication } = fbResponse;
-      const credential = FacebookAuthProvider.credential(authentication.accessToken);
-      signInWithCredential(auth, credential)
-        .then(() => router.push('/home'))
-        .catch((error) => Alert.alert('Error', error.message));
-    }
-  }, [fbResponse]);
 
   const submit = async () => {
     const { email, password } = form;
@@ -70,7 +51,7 @@ const SignIn = () => {
     }
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(firebaseAuth, email, password);
       router.push('/home');
     } catch (error) {
       Alert.alert('Error', error.message);
@@ -78,6 +59,22 @@ const SignIn = () => {
       setIsSubmitting(false);
     }
   };
+
+  const handlePasswordReset = async () => {
+    if (!resetEmail) {
+      Alert.alert('Error', 'Please enter your email.');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(firebaseAuth, resetEmail);
+      Alert.alert('Success', 'Password reset email sent.');
+      setModalVisible(false);
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  if (initializing) return null;
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -103,9 +100,11 @@ const SignIn = () => {
           />
 
           <View className="justify-center items-center mt-2">
-            <Link href="/reset" className="text-lg font-psemibold text-secondary">
-              Forgot Password?
-            </Link>
+            <Pressable onPress={() => setModalVisible(true)}>
+              <Text className="text-lg font-psemibold text-secondary">
+                Forgot Password?
+              </Text>
+            </Pressable>
           </View>
 
           <CustomButton
@@ -116,23 +115,6 @@ const SignIn = () => {
           />
 
           <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-white justify-center font-psemibold">-------OR--------</Text>
-          </View>
-
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg text-gray-100 font-pregular">Continue with</Text>
-          </View>
-
-          <View className="justify-center pt-5 flex-row gap-10">
-            <TouchableOpacity onPress={() => promptAsync()}>
-              <Image source={icons.google} className="w-12 h-12" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => fbPromptAsync()}>
-              <Image source={icons.facebook} className="w-12 h-12" />
-            </TouchableOpacity>
-          </View>
-
-          <View className="justify-center pt-5 flex-row gap-2">
             <Text className="text-lg text-gray-100 font-pregular">Don't have an Account?</Text>
             <Link href="/sign-up" className="text-lg font-psemibold text-secondary">
               Sign-Up
@@ -140,6 +122,41 @@ const SignIn = () => {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <View className="flex-1 justify-center items-center bg-black bg-opacity-50">
+          <View className="bg-white rounded-lg p-6 w-80">
+            <Text className="text-lg font-bold mb-4">Reset Password</Text>
+            <TextInput
+              placeholder="Enter your email"
+              value={resetEmail}
+              onChangeText={setResetEmail}
+              className="border border-gray-300 rounded p-2 mb-4"
+              keyboardType="email-address"
+            />
+            <View className="flex-row justify-end">
+              <Pressable
+                className="mr-4"
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text className="text-blue-500">Cancel</Text>
+              </Pressable>
+              <Pressable
+                onPress={handlePasswordReset}
+              >
+                <Text className="text-red-500">Reset</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

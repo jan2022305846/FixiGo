@@ -4,10 +4,11 @@ import { Image, View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../../constants';
 import FormField from '../../components/FormField';
-import CustomButton from '../../components/CustomButton';
+import SignUpButton from '../../components/SignUpButton';
 import { Link, useRouter } from 'expo-router';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';  // Import auth object
+import CheckBox from 'expo-checkbox'; // Ensure you have this package installed
 
 const SignUp = () => {
   const router = useRouter();
@@ -19,43 +20,19 @@ const SignUp = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   const submit = async () => {
     const { email, password, username } = form;
-
     if (!email || !password || !username) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'All fields are required.');
       return;
     }
-
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long');
-      return;
-    }
-
     setIsSubmitting(true);
-
     try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Update the user's displayName
-      await updateProfile(user, {
-        displayName: username,
-        // photoURL: 'https://example.com/profile.jpg', // Optional: set photoURL if available
-      });
-
-      // Optional: Reload the user to get updated info
-      await user.reload();
-      const updatedUser = auth.currentUser;
-      console.log('User displayName set to:', updatedUser.displayName); // Debugging log
-
-      Alert.alert('Success', `Welcome, ${username}! Your account has been created.`);
-      setForm({ username: '', email: '', password: '' });  // Reset form
-
-      // Navigate to the Home or Profile screen after successful sign-up
-      router.replace('/home'); // Ensure '/home' correctly includes the Profile tab
+      await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(auth.currentUser, { displayName: username });
+      router.push('/home');
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
@@ -71,12 +48,11 @@ const SignUp = () => {
           <Text className="text-2xl text-white text-semibold mt-5 font-psemibold">
             Sign Up
           </Text>
-
           <FormField
             title="Username"
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
-            otherStyles="mt-10"
+            otherStyles="mt-7"
           />
           <FormField
             title="Email"
@@ -93,17 +69,26 @@ const SignUp = () => {
             secureTextEntry={true}
           />
 
-          <View className="flex-row items-center mt-5">
-            <Text className="text-sm text-gray-100 font-pregular mt-2">
-              I agree to the Terms of Service and Privacy Policy
+          <View className="flex-row justify-center items-center mt-4">
+            <CheckBox
+              value={isChecked}
+              onValueChange={setIsChecked}
+              color={isChecked ? '#fff' : undefined}
+            />
+            <Text className="text-white ml-2">
+              I agree to the{' '}
+              <Link href="/terms&con" className="text-blue-500">
+                Terms of Service and Privacy Policy
+              </Link>
             </Text>
           </View>
 
-          <CustomButton
+          <SignUpButton
             title="Sign Up"
             handlePress={submit}
             containerStyles="mt-7"
             isLoading={isSubmitting}
+            disabled={!isChecked}
           />
 
           <View className="justify-center pt-5 flex-row gap-2">

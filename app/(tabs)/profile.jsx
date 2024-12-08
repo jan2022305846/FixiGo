@@ -1,12 +1,10 @@
 // app/tabs/profile.jsx
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, ScrollView, Alert } from 'react-native';
+import { Image, View, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '../../components/CustomButton';
 import Header from '../../components/Header';
 import { images } from '../../constants';
 import { auth } from '../../firebaseConfig';
-import { signOut } from 'firebase/auth';
 import { useRouter } from 'expo-router';
 
 const ProfileScreen = () => {
@@ -38,17 +36,6 @@ const ProfileScreen = () => {
     return () => unsubscribe();
   }, [router]);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      Alert.alert('Success', 'You have been logged out successfully.');
-      router.replace('/sign-in');
-    } catch (error) {
-      console.error('Error signing out:', error);
-      Alert.alert('Error', 'Failed to log out. Please try again.');
-    }
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <View className="relative flex-1">
@@ -64,14 +51,6 @@ const ProfileScreen = () => {
               <Text className="text-lg text-white font-pextrabold">{user?.displayName || 'Loading...'}</Text>
               <Text className="text-md text-white font-psemibold">{user?.email || ' '}</Text>
             </View>
-          </View>
-          <View className="mb-4 px-4">
-            <CustomButton
-              title="Logout"
-              handlePress={handleLogout}
-              containerStyles="mx-7"
-              isLoading={false}
-            />
           </View>
         </ScrollView>
       </View>

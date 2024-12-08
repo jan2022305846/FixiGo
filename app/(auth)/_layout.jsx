@@ -18,6 +18,12 @@ const AuthLayout = () => {
             headerShown : false,
           }}
         />
+        <Stack.Screen 
+          name="terms&con"
+          options={{
+            headerShown : false,
+          }}
+        />
       </Stack>
 
       <StatusBar 

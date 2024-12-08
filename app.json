@@ -9,17 +9,30 @@
     "orientation": "portrait",
     "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "dark",
+    "platforms": ["ios", "android", "web"],
     "splash": {
       "image": "./assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#050A30"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.fixigo"
+      "bundleIdentifier": "com.yourcompany.yourappname",
+      "buildNumber": "1.0.0",
+      "googleServicesFile": "./google-services.json",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan QR codes.",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to show nearby places."
+      }
     },
     "android": {
       "package": "com.anonymous.fixigo",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#050A30"
@@ -31,7 +44,30 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-video"
+      "expo-video",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "1294018571840644",
+          "clientToken": "98c70fef86c3f9776846e4c63370d199",
+          "displayName": "FixiGo",
+          "scheme": "fb1294018571840644",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      [
+        "expo-build-properties",
+        {
+          "ios":{
+            "useFrameWorks": "static"
+          }
+        }
+      ]
     ],
     "extra": {
       "router": {
@@ -43,3 +79,4 @@
     }
   }
 }
+      
