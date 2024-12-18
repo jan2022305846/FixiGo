@@ -1,6 +1,6 @@
 // app/tabs/profile.jsx
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, ScrollView } from 'react-native';
+import { Image, View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Header from '../../components/Header';
 import { images } from '../../constants';
@@ -52,6 +52,9 @@ const ProfileScreen = () => {
               <Text className="text-md text-white font-psemibold">{user?.email || ' '}</Text>
             </View>
           </View>
+          <TouchableOpacity onPress={() => router.push('/bookingtab/bookings')} className="bg-blue-500 py-2 px-4 rounded-full mt-4">
+            <Text className="text-white text-center">View Bookings</Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
     </SafeAreaView>

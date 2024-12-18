@@ -10,6 +10,7 @@ const BookingLayout = () => {
       <Stack.Screen name="transaction" options={{ headerShown: false }} />
       <Stack.Screen name="confirmation" options={{ headerShown: false }} />
       <Stack.Screen name="mechreview" options={{ headerShown: false }} />
+      <Stack.Screen name="bookings" options={{ headerShown: false }} />
     </Stack>
   );
 };
